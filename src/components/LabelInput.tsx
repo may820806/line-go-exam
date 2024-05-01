@@ -2,15 +2,15 @@ import FormLabel from '@mui/material/FormLabel';
 import TextField, { BaseTextFieldProps } from '@mui/material/TextField';
 
 interface Props extends BaseTextFieldProps {
-  name: string;
+  inputName: string;
   label: string;
 }
 
-const LabelInput = ({ label, name = 'inputName', ...props }: Props) => {
+const LabelInput = ({ label, inputName = 'inputName', ...props }: Props) => {
   return (
     <div className="label-input-wrap">
-      <FormLabel htmlFor={name}>{label}</FormLabel>
-      <TextField id={name} variant="outlined" {...props} />
+      <FormLabel htmlFor={inputName}>{label}</FormLabel>
+      <TextField id={inputName} variant="outlined" {...props} />
     </div>
   );
 };

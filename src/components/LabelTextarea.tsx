@@ -3,15 +3,15 @@ import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import { TextareaAutosizeProps } from '@mui/material';
 
 interface Props extends TextareaAutosizeProps {
-  name: string;
+  inputName: string;
   label: string;
 }
 
-const LabelTextarea = ({ label, name = 'TextareaName', ...props }: Props) => {
+const LabelTextarea = ({ label, inputName = 'TextareaName', ...props }: Props) => {
   return (
     <div className="label-input-wrap">
-      <FormLabel htmlFor={name}>{label}</FormLabel>
-      <TextareaAutosize id={name} {...props} />
+      <FormLabel htmlFor={inputName}>{label}</FormLabel>
+      <TextareaAutosize id={inputName} {...props} />
     </div>
   );
 };
