@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { IFlight } from '@/interfaces/flight.interface';
 
 const useFlightArrival = () => {
-  const [flightData, setFlightData] = useState();
+  const [flightData, setFlightData] = useState<IFlight[]>();
 
   const fetchFlightArrival = async () => {
     const res = await axios.get(

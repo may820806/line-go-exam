@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useEffect, useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import styles from '@/styles/Home.module.scss';
 import LabelInput from '@/components/LabelInput';
 import LabelTextarea from '@/components/LabelTextarea';
@@ -19,10 +19,18 @@ import {
 import HomeDrawer from '@/components/HomeDrawer';
 
 export default function Home() {
-  // const { flightData } = useFlightArrival();
+  const { flightData } = useFlightArrival();
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [formValues, setFormValues] = useState<TFormValues>();
   const [success, setSuccess] = useState<boolean>(false);
+
+  // CA409, CX451, BR2770...
+
+  const flightNumberList = useMemo(() => {
+    return flightData?.map(
+      (flight) => `${flight.AirlineID}${flight.FlightNumber}`,
+    );
+  }, [flightData]);
 
   type TFormValues = {
     airport: string;
@@ -33,6 +41,7 @@ export default function Home() {
     note: string;
   };
 
+  // required訊息不用顯示, 純留著備用
   const valuesSchema = Yup.object().shape({
     flight: Yup.string()
       .matches(flightNumberPattern, '航班編號格式錯誤')
@@ -50,7 +59,13 @@ export default function Home() {
 
   const submitForm = (values: TFormValues) => {
     setFormValues(values);
-    if (true) {
+    let flightExist;
+
+    if (flightNumberList?.length) {
+      flightExist = flightNumberList.includes(values.flight);
+    }
+
+    if (!flightExist) {
       setDrawerOpen(true);
     } else {
       setSuccess(true);
@@ -61,7 +76,7 @@ export default function Home() {
   const onCloseDrawer = () => {
     setDrawerOpen(false);
     setSuccess(false);
-  }
+  };
 
   return (
     <>
@@ -140,6 +155,7 @@ export default function Home() {
           )}
         </Formik>
       </main>
+
       <HomeDrawer open={drawerOpen} onClose={onCloseDrawer}>
         {success ? (
           <div className={styles[`success-view`]}>
