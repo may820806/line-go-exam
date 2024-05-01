@@ -1,13 +1,14 @@
 import Head from 'next/head';
-import { useEffect, useRef } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import styles from '@/styles/Home.module.scss';
 import LabelInput from '@/components/LabelInput';
-import LabelInputNumber from '@/components/LabelInputNumber';
 import LabelTextarea from '@/components/LabelTextarea';
 import useFlightArrival from '@/application/getFlightArrival';
 import Button from '@/components/CustomizedButtons';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import CheckIcon from '../../public/check-circle.svg';
+import Image from 'next/image';
 
 import {
   flightNumberPattern,
@@ -15,9 +16,13 @@ import {
   phonePattern,
   idPassportNumberPattern,
 } from '@/utils/regexp';
+import HomeDrawer from '@/components/HomeDrawer';
 
 export default function Home() {
   // const { flightData } = useFlightArrival();
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const [formValues, setFormValues] = useState<TFormValues>();
+  const [success, setSuccess] = useState<boolean>(false);
 
   type TFormValues = {
     airport: string;
@@ -35,13 +40,28 @@ export default function Home() {
     customerName: Yup.string()
       .matches(namePattern, '姓名格式錯誤')
       .required('姓名為必填'),
-    phone: Yup.string().required('電話為必填').matches(phonePattern, '電話格式錯誤'),
-    idPassportNumber: Yup.string().required('身份證字號/護照編號為必填'),
+    phone: Yup.string()
+      .required('電話為必填')
+      .matches(phonePattern, '電話格式錯誤'),
+    idPassportNumber: Yup.string()
+      .required('身份證字號/護照編號為必填')
+      .matches(idPassportNumberPattern, '身份證字號/護照編號格式錯誤'),
   });
 
   const submitForm = (values: TFormValues) => {
-    console.log('values', values);
+    setFormValues(values);
+    if (true) {
+      setDrawerOpen(true);
+    } else {
+      setSuccess(true);
+      setDrawerOpen(true);
+    }
   };
+
+  const onCloseDrawer = () => {
+    setDrawerOpen(false);
+    setSuccess(false);
+  }
 
   return (
     <>
@@ -65,14 +85,15 @@ export default function Home() {
           validationSchema={valuesSchema}
           onSubmit={(values) => {
             submitForm(values);
-            
           }}
         >
           {(props) => (
-            <form onSubmit={(e)=>{
-              e.preventDefault();
-              props.handleSubmit();
-            }}>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                props.handleSubmit();
+              }}
+            >
               <LabelInput
                 label="下車機場"
                 value="桃園國際機場 第一航廈"
@@ -119,6 +140,31 @@ export default function Home() {
           )}
         </Formik>
       </main>
+      <HomeDrawer open={drawerOpen} onClose={onCloseDrawer}>
+        {success ? (
+          <div className={styles[`success-view`]}>
+            <Image src={CheckIcon} width="60" height="60" alt="success" />
+            <p>完成送機行程</p>
+          </div>
+        ) : (
+          <div className={styles['drawer-content']}>
+            <h3>查不到「{formValues?.flight}」航班資訊</h3>
+            <p>
+              請確認航班資訊、起飛時間等。你也可以直接填寫此航班作為機場接送資訊
+            </p>
+            <Button
+              text="確認航班資訊，並送出"
+              onClick={() => setSuccess(true)}
+            />
+            <Button
+              text="重新填寫"
+              bgcolor="white"
+              textColor="#4B5C6B"
+              onClick={() => setDrawerOpen(false)}
+            />
+          </div>
+        )}
+      </HomeDrawer>
     </>
   );
 }
