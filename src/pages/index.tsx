@@ -7,7 +7,7 @@ import useFlightArrival from '@/application/getFlightArrival';
 import Button from '@/components/CustomizedButtons';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import CheckIcon from '../../public/check-circle.svg';
+import CheckIcon from '@/assets/check-circle.svg';
 import Image from 'next/image';
 
 import {
