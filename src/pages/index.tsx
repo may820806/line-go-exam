@@ -97,6 +97,8 @@ export default function Home() {
             idPassportNumber: '',
             note: '',
           }}
+          validateOnBlur={false}
+          validateOnChange={false}
           validationSchema={valuesSchema}
           onSubmit={(values) => {
             submitForm(values);
